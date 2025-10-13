@@ -2,6 +2,8 @@
 
 **Source:** Princeton IntroCS — Chapter 2: Functions (Java)  
 <https://introcs.cs.princeton.edu/java/20functions/>
+**Source:** Index by week for CS301
+<https://github.com/penpro/CS-301-CS-Foundations-Index/tree/main>
 
 ## Why this chapter matters
 Functions let you split work into small, testable pieces, reuse logic, and reason at a higher level. Chapter 2 covers:
