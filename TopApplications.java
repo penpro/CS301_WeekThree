@@ -1,8 +1,14 @@
+
+
 public class TopApplications {
     public static void main(String[] args) {
 
 
+        System.out.println(lowestScoreByAcceptanceGaussian(5000, 20000, 1200.0, 100.0));
         System.out.println(LowestScoreByAcceptance(5000));
+        // playing with quantile numbers
+        // so if you want 5000 out of 20000 student you want the top 25% which corresponds to the 75% percentile as the cutoff
+        System.out.println(Gaussian.inverseCDF(.90, 1200, 100));
 
     }
 
@@ -21,8 +27,11 @@ public class TopApplications {
         float LowestScore = 1700;
         int Applications = 20000;
         int StudentsAccepted = 0;
+
+        // mean score
         int MeanScore = 1200;
         int StandardDeviationScore = 100;
+        // i guess it's QUANtile not QUARtile
         int TopQuartile = (int) (Applications*0.0015);
         int TopThirdQuartile = (int) (Applications*0.0235);
         int TopSecondQuartile = (int) (Applications*0.135);
@@ -32,7 +41,7 @@ public class TopApplications {
         }
         else {
             StudentsAccepted += TopQuartile;
-            System.out.println(StudentsAccepted);
+            //System.out.println(StudentsAccepted);
             LowestScore = 1500;
         }
         if ((NewStudents - StudentsAccepted) < (NewStudents-TopThirdQuartile)){
@@ -40,7 +49,7 @@ public class TopApplications {
         }
         else{
             StudentsAccepted += TopThirdQuartile;
-            System.out.println(StudentsAccepted);
+            //System.out.println(StudentsAccepted);
             LowestScore = 1400;
         }
         if ((NewStudents - StudentsAccepted) < (NewStudents-TopSecondQuartile)){
@@ -48,7 +57,7 @@ public class TopApplications {
         }
         else{
             StudentsAccepted += TopSecondQuartile;
-            System.out.println(StudentsAccepted);
+            //System.out.println(StudentsAccepted);
             LowestScore = 1300;
         }
         if ((NewStudents - StudentsAccepted) < (NewStudents-TopFirstQuartile)){
@@ -56,7 +65,7 @@ public class TopApplications {
             //StudentsAccepted += TopFirstQuartile;
         }
         else{
-            System.out.println("got here");
+            //System.out.println("got here");
             float Slope = (float) ((float) StandardDeviationScore/ (float) ((Applications)*0.34));
             LowestScore = ((MeanScore + StandardDeviationScore) - ((Slope)*(NewStudents-StudentsAccepted)));
         }
@@ -66,5 +75,21 @@ public class TopApplications {
 
         return LowestScore;
     }
+
+    // "Continuous normal model"
+    // https://en.wikipedia.org/wiki/Normal_distribution
+    // Cumulative distribution function, but we inverse it because we're taking away from the top
+    static double lowestScoreByAcceptanceGaussian(int newStudents, int applications, double mu, double sigma) {
+        if (newStudents <= 0 || newStudents >= applications) {
+            throw new IllegalArgumentException("newStudents must be in (0, applications).");
+        }
+        // creates application to newstudent ratio, then subtracts that from 1 to get the percentile
+        double acceptRate = (double) newStudents / applications;     // top tail mass
+        double targetQuantile = 1.0 - acceptRate;                    // CDF at cutoff
+        // uses magic gaussian class to return the test score associate with that percentile
+        return Gaussian.inverseCDF(targetQuantile, mu, sigma);
+    }
+
+
 
 }

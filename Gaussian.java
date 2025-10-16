@@ -54,6 +54,10 @@ public class Gaussian {
         return inverseCDF(y, 0.00000001, -8, 8);
     }
 
+    public static double inverseCDF(double y, double mu, double sigma) {
+        return mu + sigma * inverseCDF(y);
+    }
+
     // bisection search
     private static double inverseCDF(double y, double delta, double lo, double hi) {
         double mid = lo + (hi - lo) / 2;
